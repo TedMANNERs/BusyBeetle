@@ -2,11 +2,12 @@ BusyBeetle
 ==========
 A simulation of Beetleworld.
 
-How to play:
-1. Start the server.
-2. Start one or more clients.
-3. Choose a color and click on the quadrangle.
-4. Wait, watch and win.
+How to play:  
+1. Start the server.  
+2. Start one or more clients.   
+3. Choose a color and click on the quadrangle.  
+4. Wait, watch and win. 
+
 
 ##World
 The World is rendered as a BitmapImage, while the program itself uses a normal bitmap to work with. The conversion from Bitmap to BitmapImage is done by the bitmap converter.
