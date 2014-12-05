@@ -20,8 +20,13 @@
         <Grid>
             <Border BorderThickness="1" BorderBrush="Black" Height="{Binding Coordinator.World.HeightScaled}" Width="{Binding Coordinator.World.WidthScaled}">
                 <Image Width="{Binding Coordinator.World.WidthScaled}" Height="{Binding Coordinator.World.HeightScaled}" Source="{Binding Path=Coordinator.World.Bitmap, 
-                       Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}" Stretch="Fill" SnapsToDevicePixels="True"
-                       RenderOptions.BitmapScalingMode="NearestNeighbor" MouseLeftButtonDown="Image_MouseLeftButtonDown" MouseRightButtonDown="Image_MouseRightButtonDown"/>
+                        Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}" Stretch="Fill" SnapsToDevicePixels="True"
+                        RenderOptions.BitmapScalingMode="NearestNeighbor">
+                    <Image.InputBindings>
+                        <MouseBinding Gesture="LeftClick" Command="{Binding AddBeetleCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Image}}}"/>
+                        <MouseBinding Gesture="RightClick" Command="{Binding GetColorCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Image}}}"/>
+                    </Image.InputBindings>
+                </Image>
             </Border>
         </Grid>
         <DockPanel Grid.Row="1" VerticalAlignment="Bottom" Margin="10">
