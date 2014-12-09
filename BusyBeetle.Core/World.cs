@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using BusyBeetle.Core.Properties;
 
 namespace BusyBeetle.Core
 {
     public class World : INotifyPropertyChanged, IWorld
     {
-        private readonly Dispatcher _dispatcher;
+        private readonly IDispatcher _dispatcher;
         private bool _isRunning = true;
 
-        public World(int width, int height)
+        public World(IDispatcher dispatcher, int width, int height)
         {
             Width = width;
             Height = height;
-            _dispatcher = Dispatcher.CurrentDispatcher;
+            _dispatcher = dispatcher;
             Beetles = new List<Beetle>();
             CreateBitmap();
             Task updateTask = new Task(Update);
@@ -59,7 +57,7 @@ namespace BusyBeetle.Core
         {
             try
             {
-                _dispatcher.BeginInvoke((Action)(() => Bitmap.SetPixel(x, y, color)));
+                _dispatcher.BeginInvoke(() => Bitmap.SetPixel(x, y, color));
             }
             catch (TaskCanceledException)
             {

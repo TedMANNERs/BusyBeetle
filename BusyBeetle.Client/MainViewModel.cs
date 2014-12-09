@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using BusyBeetle.Client.Properties;
 using BusyBeetle.Core;
 
@@ -23,11 +24,16 @@ namespace BusyBeetle.Client
                 return;
 
             Application.Current.MainWindow.Closing += MainWindowClosing;
+
             AddBeetleCommand = new DelegateCommand(obj => Coordinator.SpawnBeetleAt(Mouse.GetPosition((IInputElement)obj), (Color)SelectedColor.GetValue(null)), () => true);
             GetColorCommand = new DelegateCommand(obj => GetPixelColor(Mouse.GetPosition((IInputElement)obj)), () => true);
-            Coordinator = new Coordinator();
             _service.OnAppIdReceivedHandler += AppIdReceived;
-            new Task(() => _service.Start("localhost", 6006, Coordinator)).Start();
+
+            IDispatcher dispatcher = new BeetleDispatcher(Dispatcher.CurrentDispatcher);
+            CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
+            Coordinator = CoreKernel.Get<Coordinator>();
+
+            new Task(() => _service.Start("ch10dd279", 6006, Coordinator)).Start();
         }
 
         public ICommand AddBeetleCommand { get; set; }

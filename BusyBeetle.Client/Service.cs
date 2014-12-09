@@ -33,76 +33,70 @@ namespace BusyBeetle.Client
 
         private void Run(string adress, int port)
         {
-            try
+            TcpClient client = new TcpClient(adress, port);
+            NetworkStream stream = client.GetStream();
+            do
             {
-                TcpClient client = new TcpClient(adress, port);
-                NetworkStream stream = client.GetStream();
-                do
+                try
                 {
-                    try
+                    BinaryWriter writer = new BinaryWriter(stream);
+                    BinaryReader reader = new BinaryReader(stream);
+
+                    if (!Connection.IsEstablished)
                     {
-                        BinaryWriter writer = new BinaryWriter(stream);
-                        BinaryReader reader = new BinaryReader(stream);
-
-                        if (!Connection.IsEstablished)
-                        {
-                            writer.Write(_appId);
-                            writer.Flush();
-                            _appId = reader.ReadInt32();
-                            OnAppIdReceivedHandler(this, new AppIdReceivedEventArgs { AppId = _appId });
-                            long length = reader.ReadInt64();
-                            byte[] image = new byte[length];
-                            ServiceHelper.ReadBytesFromStream(stream, image);
-
-                            Bitmap bitmap = new Bitmap(ByteArrayToBitmap(image));
-                            _coordinator.World.Bitmap = bitmap;
-                            Connection.IsEstablished = true;
-                        }
-                        string message = reader.ReadString();
-                        if (!message.Equals("YourMove"))
-                            continue;
-                        ServiceHelper.AddPixels(reader, stream, _coordinator.World.SetAt);
-
-                        List<PixelData> pixels = new List<PixelData>();
-                        lock (_coordinator.World.Beetles)
-                        {
-                            foreach (Beetle beetle in _coordinator.World.Beetles)
-                            {
-                                beetle.Update();
-                                pixels.Add(beetle.ModifiedPixel);
-                            }
-                        }
-
-                        byte[] pixelArray;
-                        if (_coordinator.World.Beetles.Any())
-                        {
-                            pixelArray = ServiceHelper.ObjectToByteArray(pixels);
-                            writer.Write(pixelArray.Length);
-                            writer.Write(pixelArray);
-                        }
-                        else
-                        {
-                            pixelArray = new byte[0];
-                            writer.Write(pixelArray.Length);
-                        }
+                        writer.Write(_appId);
                         writer.Flush();
+                        _appId = reader.ReadInt32();
+                        OnAppIdReceivedHandler(this, new AppIdReceivedEventArgs { AppId = _appId });
+                        long length = reader.ReadInt64();
+                        byte[] image = new byte[length];
+                        ServiceHelper.ReadBytesFromStream(stream, image);
+
+                        Bitmap bitmap = new Bitmap(ByteArrayToBitmap(image));
+                        _coordinator.World.Bitmap = bitmap;
+                        Connection.IsEstablished = true;
                     }
-                    catch (SocketException)
+                    string message = reader.ReadString();
+                    if (!message.Equals("YourMove"))
+                        continue;
+                    ServiceHelper.AddPixels(reader, stream, _coordinator.World.SetAt);
+
+                    List<PixelData> pixels = new List<PixelData>();
+                    lock (_coordinator.World.Beetles)
                     {
-                        Connection.IsEstablished = false;
+                        foreach (Beetle beetle in _coordinator.World.Beetles)
+                        {
+                            beetle.Update();
+                            pixels.Add(beetle.ModifiedPixel);
+                        }
                     }
-                    catch (IOException)
+
+                    byte[] pixelArray;
+                    if (_coordinator.World.Beetles.Any())
                     {
-                        Connection.IsEstablished = false;
+                        pixelArray = ServiceHelper.ObjectToByteArray(pixels);
+                        writer.Write(pixelArray.Length);
+                        writer.Write(pixelArray);
                     }
+                    else
+                    {
+                        pixelArray = new byte[0];
+                        writer.Write(pixelArray.Length);
+                    }
+                    writer.Flush();
                 }
-                while (Connection.IsEstablished);
-                stream.Close();
-                client.Close();
+                catch (SocketException)
+                {
+                    Connection.IsEstablished = false;
+                }
+                catch (IOException)
+                {
+                    Connection.IsEstablished = false;
+                }
             }
-            catch (Exception)
-            {
-            }
+            while (Connection.IsEstablished);
+            stream.Close();
+            client.Close();
         }
 
         private Bitmap ByteArrayToBitmap(byte[] image)

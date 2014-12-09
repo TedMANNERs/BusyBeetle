@@ -6,12 +6,12 @@ namespace BusyBeetle.Core
 {
     public class Coordinator
     {
-        public Coordinator()
+        public Coordinator(IWorldFactory worldFactory)
         {
-            World = new World((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor));
+            World = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor));
         }
 
-        public World World { get; private set; }
+        public IWorld World { get; private set; }
 
         public void SpawnBeetleAt(Point position, System.Windows.Media.Color color)
         {

@@ -13,10 +13,15 @@ namespace BusyBeetle.Server
     public class Service
     {
         private readonly List<PixelData> _modifiedPixels = new List<PixelData>();
-        private readonly World _world = new World((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor));
+        private readonly IWorld _world;
         private int _appId;
         private List<Client> _clients = new List<Client>();
         private bool _isRunning;
+
+        public Service(IWorldFactory worldFactory)
+        {
+            _world = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor));
+        }
 
         public void Start(IPAddress adress, int port)
         {
