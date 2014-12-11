@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using BusyBeetle.Core;
+using BusyBeetle.Core.Serialization;
 
 namespace BusyBeetle.Client
 {
@@ -74,7 +75,7 @@ namespace BusyBeetle.Client
                     byte[] pixelArray;
                     if (_coordinator.World.Beetles.Any())
                     {
-                        pixelArray = ServiceHelper.ObjectToByteArray(pixels);
+                        pixelArray = ServiceHelper.PacketToByteArray(new Packet { Type = PacketType.PixelData, Content = pixels });
                         writer.Write(pixelArray.Length);
                         writer.Write(pixelArray);
                     }

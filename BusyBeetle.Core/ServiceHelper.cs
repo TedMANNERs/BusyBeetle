@@ -9,15 +9,15 @@ namespace BusyBeetle.Core
 {
     public static class ServiceHelper
     {
-        public static byte[] ObjectToByteArray(object obj)
+        public static byte[] PacketToByteArray(IPacket packet)
         {
-            if (obj == null)
+            if (packet == null)
                 return null;
             Serializer serializer = new Serializer();
-            return serializer.Serialize(obj);
+            return serializer.Serialize(packet);
         }
 
-        public static object ByteArrayToObject(byte[] bytes)
+        public static IPacket ByteArrayToPacket(byte[] bytes)
         {
             if (bytes == null)
                 return null;
@@ -46,7 +46,7 @@ namespace BusyBeetle.Core
                 return;
             byte[] bytes = new byte[arraySize];
             ReadBytesFromStream(stream, bytes);
-            List<PixelData> pixels = (List<PixelData>)ByteArrayToObject(bytes);
+            List<PixelData> pixels = (List<PixelData>)ByteArrayToPacket(bytes).Content;
             foreach (PixelData pixel in pixels)
             {
                 action(pixel.PositionX, pixel.PositionY, pixel.Color);
@@ -60,7 +60,7 @@ namespace BusyBeetle.Core
                 return;
             byte[] bytes = new byte[arraySize];
             ReadBytesFromStream(stream, bytes);
-            List<PixelData> pixels = (List<PixelData>)ByteArrayToObject(bytes);
+            List<PixelData> pixels = (List<PixelData>)ByteArrayToPacket(bytes).Content;
             foreach (PixelData pixel in pixels)
             {
                 action(pixel);

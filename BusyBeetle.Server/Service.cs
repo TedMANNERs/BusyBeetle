@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using BusyBeetle.Core;
+using BusyBeetle.Core.Serialization;
 
 namespace BusyBeetle.Server
 {
@@ -94,7 +95,7 @@ namespace BusyBeetle.Server
                             byte[] pixelArray;
                             if (_modifiedPixels.Any())
                             {
-                                pixelArray = ServiceHelper.ObjectToByteArray(_modifiedPixels);
+                                pixelArray = ServiceHelper.PacketToByteArray(new Packet { Type = PacketType.PixelData, Content = _modifiedPixels });
                                 writer.Write(pixelArray.Length);
                                 writer.Write(pixelArray);
                                 Console.WriteLine("Pixels to {0}; {1} sent", client.IpAddress, client.Id);
@@ -113,7 +114,7 @@ namespace BusyBeetle.Server
                                 continue;
                             byte[] bytes = new byte[arraySize];
                             ServiceHelper.ReadBytesFromStream(stream, bytes);
-                            List<PixelData> pixels = (List<PixelData>)ServiceHelper.ByteArrayToObject(bytes);
+                            List<PixelData> pixels = (List<PixelData>)ServiceHelper.ByteArrayToPacket(bytes).Content;
                             foreach (PixelData pixel in pixels)
                             {
                                 _modifiedPixels.Add(pixel);

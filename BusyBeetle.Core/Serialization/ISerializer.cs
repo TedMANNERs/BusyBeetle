@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace BusyBeetle.Core.Serialization
+﻿namespace BusyBeetle.Core.Serialization
 {
     public interface ISerializer
     {
-        byte[] Serialize(object input);
+        byte[] Serialize(IPacket input);
 
-        object Deserialize(byte[] bytes);
+        IPacket Deserialize(byte[] bytes);
     }
 }

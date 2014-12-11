@@ -26,7 +26,7 @@ namespace BusyBeetle.CoreTest.Serialization
             byte[] bytes = { (byte)PacketType.PixelData, 0x01, 0x32, 0x32, 0x00, 0x00, 0x00 };
 
             // act
-            List<PixelData> pixels = (List<PixelData>)_testee.Deserialize(bytes);
+            List<PixelData> pixels = (List<PixelData>)_testee.Deserialize(bytes).Content;
 
             // assert
             pixels.Single().ShouldBeEquivalentTo(new PixelData(50, 50, Color.FromArgb(0x00, 0x00, 0x00)));
@@ -45,7 +45,7 @@ namespace BusyBeetle.CoreTest.Serialization
                 };
 
             // act
-            List<PixelData> pixels = (List<PixelData>)_testee.Deserialize(bytes);
+            List<PixelData> pixels = (List<PixelData>)_testee.Deserialize(bytes).Content;
 
             // assert
             pixels[0].ShouldBeEquivalentTo(new PixelData(50, 50, Color.FromArgb(0x00, 0x00, 0x00)));
@@ -67,7 +67,7 @@ namespace BusyBeetle.CoreTest.Serialization
                 };
 
             // act
-            byte[] bytes = _testee.Serialize(pixels);
+            byte[] bytes = _testee.Serialize(new Packet { Type = PacketType.PixelData, Content = pixels });
 
             // assert
             bytes.ShouldAllBeEquivalentTo(expectedBytes);
