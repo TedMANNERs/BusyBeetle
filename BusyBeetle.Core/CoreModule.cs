@@ -1,4 +1,5 @@
-﻿using Ninject.Extensions.Factory;
+﻿using BusyBeetle.Core.Serialization;
+using Ninject.Extensions.Factory;
 using Ninject.Modules;
 
 namespace BusyBeetle.Core
@@ -9,6 +10,7 @@ namespace BusyBeetle.Core
         {
             Bind<IWorldFactory>().ToFactory();
             Bind<IWorld>().To<World>();
+            Bind<ISerializer>().To<Serializer>();
         }
     }
 }

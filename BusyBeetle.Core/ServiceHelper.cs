@@ -3,32 +3,26 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
+using BusyBeetle.Core.Serialization;
 
 namespace BusyBeetle.Core
 {
     public static class ServiceHelper
     {
-        public static byte[] ObjectToByteArray(Object obj)
+        public static byte[] ObjectToByteArray(object obj)
         {
             if (obj == null)
                 return null;
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
-            formatter.Serialize(stream, obj);
-            return stream.ToArray();
+            Serializer serializer = new Serializer();
+            return serializer.Serialize(obj);
         }
 
-        public static Object ByteArrayToObject(byte[] bytes)
+        public static object ByteArrayToObject(byte[] bytes)
         {
             if (bytes == null)
                 return null;
-            MemoryStream stream = new MemoryStream();
-            BinaryFormatter formatter = new BinaryFormatter();
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Seek(0, SeekOrigin.Begin);
-            Object obj = formatter.Deserialize(stream);
-            return obj;
+            Serializer serializer = new Serializer();
+            return serializer.Deserialize(bytes);
         }
 
         public static void ReadBytesFromStream(NetworkStream stream, byte[] bytes)

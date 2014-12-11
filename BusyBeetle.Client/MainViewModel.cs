@@ -33,7 +33,7 @@ namespace BusyBeetle.Client
             CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
             Coordinator = CoreKernel.Get<Coordinator>();
 
-            new Task(() => _service.Start("ch10dd279", 6006, Coordinator)).Start();
+            new Task(() => _service.Start("localhost", 6006, Coordinator)).Start();
         }
 
         public ICommand AddBeetleCommand { get; set; }
