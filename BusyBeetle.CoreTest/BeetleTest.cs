@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using BusyBeetle.Core.Direction;
 using FakeItEasy;
 using BusyBeetle.Core;
 using NUnit.Framework;

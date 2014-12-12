@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using BusyBeetle.Core;
+using BusyBeetle.Core.Dispatcher;
 using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;

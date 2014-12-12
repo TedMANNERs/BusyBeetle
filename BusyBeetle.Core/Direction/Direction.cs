@@ -1,4 +1,4 @@
-﻿namespace BusyBeetle.Core
+﻿namespace BusyBeetle.Core.Direction
 {
     public enum Direction
     {

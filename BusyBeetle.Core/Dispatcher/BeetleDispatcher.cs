@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Windows.Threading;
 
-namespace BusyBeetle.Core
+namespace BusyBeetle.Core.Dispatcher
 {
     public class BeetleDispatcher : IDispatcher
     {
-        private readonly Dispatcher _dispatcher;
+        private readonly System.Windows.Threading.Dispatcher _dispatcher;
 
-        public BeetleDispatcher(Dispatcher dispatcher)
+        public BeetleDispatcher(System.Windows.Threading.Dispatcher dispatcher)
         {
             _dispatcher = dispatcher;
         }

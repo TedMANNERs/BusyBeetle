@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using BusyBeetle.Core.Dispatcher;
 using BusyBeetle.Core.Properties;
 
 namespace BusyBeetle.Core

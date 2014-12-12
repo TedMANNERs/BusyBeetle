@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Threading;
+using BusyBeetle.Core.Direction;
 
 namespace BusyBeetle.Core
 {
@@ -19,7 +20,7 @@ namespace BusyBeetle.Core
 
         public int PositionX { get; set; }
         public int PositionY { get; set; }
-        public Direction Direction { get; set; }
+        public Direction.Direction Direction { get; set; }
         public Color Color { get; set; }
         public PixelData ModifiedPixel { get; private set; }
 
@@ -37,16 +38,16 @@ namespace BusyBeetle.Core
         {
             switch (Direction)
             {
-                case Direction.Up:
+                case Core.Direction.Direction.Up:
                     PositionY++;
                     break;
-                case Direction.Right:
+                case Core.Direction.Direction.Right:
                     PositionX++;
                     break;
-                case Direction.Down:
+                case Core.Direction.Direction.Down:
                     PositionY--;
                     break;
-                case Direction.Left:
+                case Core.Direction.Direction.Left:
                     PositionX--;
                     break;
             }

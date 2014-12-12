@@ -1,6 +1,6 @@
 using System;
 
-namespace BusyBeetle.Core
+namespace BusyBeetle.Core.Dispatcher
 {
     public interface IDispatcher
     {
