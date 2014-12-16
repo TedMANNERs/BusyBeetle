@@ -87,6 +87,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BitmapToBitmapImageConverter.cs" />
+    <Compile Include="ClientService.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">

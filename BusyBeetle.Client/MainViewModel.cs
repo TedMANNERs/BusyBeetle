@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -9,11 +12,14 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using BusyBeetle.Client.Properties;
 using BusyBeetle.Core;
+using BusyBeetle.Core.Dispatcher;
+using Configuration = BusyBeetle.Core.Configuration;
 
 namespace BusyBeetle.Client
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private readonly ClientService _service;
         private PropertyInfo _selectedColor;
 
         public MainViewModel()
@@ -29,6 +35,10 @@ namespace BusyBeetle.Client
             IDispatcher dispatcher = new BeetleDispatcher(Dispatcher.CurrentDispatcher);
             CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
             Coordinator = CoreKernel.Get<ICoordinator>();
+            _service = CoreKernel.Get<ClientService>();
+            IConfiguration config = new Configuration(IPAddress.Parse(ConfigurationManager.AppSettings["IpAddress"]), Convert.ToInt32(ConfigurationManager.AppSettings["Port"]));
+            _service.Init(config);
+            _service.Start();
         }
 
         public ICommand AddBeetleCommand { get; set; }
@@ -56,11 +66,16 @@ namespace BusyBeetle.Client
 
         private void MainWindowClosing(object sender, CancelEventArgs e)
         {
-            Coordinator.World.Stop();
-            foreach (Beetle beetle in Coordinator.World.Beetles)
-            {
-                beetle.Stop();
-            }
+            new Task(
+                () =>
+                {
+                    foreach (Beetle beetle in Coordinator.World.Beetles)
+                    {
+                        beetle.Stop();
+                    }
+                    _service.Stop();
+                    Coordinator.World.Stop();
+                }).Start();
         }
 
         [NotifyPropertyChangedInvocator]

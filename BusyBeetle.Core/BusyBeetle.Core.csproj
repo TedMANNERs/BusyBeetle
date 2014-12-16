@@ -64,6 +64,7 @@
     <Compile Include="Dispatcher\IDispatcher.cs" />
     <Compile Include="IConfiguration.cs" />
     <Compile Include="ICoordinator.cs" />
+    <Compile Include="IService.cs" />
     <Compile Include="Serialization\IPacket.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="IWorld.cs" />
