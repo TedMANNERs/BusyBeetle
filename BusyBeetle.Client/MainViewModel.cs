@@ -14,7 +14,6 @@ namespace BusyBeetle.Client
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly Service _service = new Service();
         private int _appId;
         private PropertyInfo _selectedColor;
 
@@ -27,13 +26,10 @@ namespace BusyBeetle.Client
 
             AddBeetleCommand = new DelegateCommand(obj => Coordinator.SpawnBeetleAt(Mouse.GetPosition((IInputElement)obj), (Color)SelectedColor.GetValue(null)), () => true);
             GetColorCommand = new DelegateCommand(obj => GetPixelColor(Mouse.GetPosition((IInputElement)obj)), () => true);
-            _service.OnAppIdReceivedHandler += AppIdReceived;
 
             IDispatcher dispatcher = new BeetleDispatcher(Dispatcher.CurrentDispatcher);
             CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
             Coordinator = CoreKernel.Get<Coordinator>();
-
-            new Task(() => _service.Start("localhost", 6006, Coordinator)).Start();
         }
 
         public ICommand AddBeetleCommand { get; set; }
@@ -82,7 +78,6 @@ namespace BusyBeetle.Client
             {
                 beetle.Stop();
             }
-            _service.Stop();
         }
 
         [NotifyPropertyChangedInvocator]
