@@ -42,8 +42,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Label Content="Application ID:" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-            <Label Content="{Binding Path=AppId}" ContentStringFormat="D5" VerticalAlignment="Center" DockPanel.Dock="Left"/>
             <Label Content="Connection" BorderThickness="2" HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right">
                 <Label.Style>
                     <Style TargetType="Label">

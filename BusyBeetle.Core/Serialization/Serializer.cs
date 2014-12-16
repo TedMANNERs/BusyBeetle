@@ -12,13 +12,6 @@ namespace BusyBeetle.Core.Serialization
                 case (byte)PacketType.MoveCommand:
                     return new Packet { Type = PacketType.MoveCommand };
 
-                case (byte)PacketType.IdExchange:
-                    int id = bytes[1];
-                    id += bytes[2] << 8;
-                    id += bytes[3] << 16;
-                    id += bytes[4] << 32;
-                    return new Packet { Type = PacketType.IdExchange, Content = id };
-
                 case (byte)PacketType.PixelData:
                 {
                     int count = bytes[1];
@@ -56,10 +49,6 @@ namespace BusyBeetle.Core.Serialization
             {
                 case PacketType.MoveCommand:
                     return new[] { (byte)input.Type };
-
-                case PacketType.IdExchange:
-                    int id = (int)input.Content;
-                    return new[] { (byte)input.Type, (byte)(id & 0xFF), (byte)((id >> 8) & 0xFF), (byte)((id >> 16) & 0xFF), (byte)((id >> 32) & 0xFF) };
 
                 case PacketType.PixelData:
 

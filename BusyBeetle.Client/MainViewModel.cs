@@ -14,7 +14,6 @@ namespace BusyBeetle.Client
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private int _appId;
         private PropertyInfo _selectedColor;
 
         public MainViewModel()
@@ -47,28 +46,12 @@ namespace BusyBeetle.Client
 
         public Point SelectedPosition { get; set; }
         public Coordinator Coordinator { get; set; }
-
-        public int AppId
-        {
-            get { return _appId; }
-            set
-            {
-                _appId = value;
-                OnPropertyChanged();
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void GetPixelColor(Point mousePosition)
         {
             System.Drawing.Color color = Coordinator.World.GetAt((int)(mousePosition.X / Values.Scalefactor), (int)(mousePosition.Y / Values.Scalefactor));
             SelectedColor = typeof(Colors).GetProperties().FirstOrDefault(p => System.Drawing.Color.FromName(p.Name).ToArgb() == color.ToArgb());
-        }
-
-        private void AppIdReceived(object sender, AppIdReceivedEventArgs e)
-        {
-            AppId = e.AppId;
         }
 
         private void MainWindowClosing(object sender, CancelEventArgs e)
