@@ -1,43 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace BusyBeetle.Core.Serialization
 {
     public class Serializer : ISerializer
     {
-        public IPacket Deserialize(byte[] bytes)
+        public IPacket Deserialize(Stream stream)
         {
-            switch (bytes[0])
+            int count = stream.ReadByte();
+
+            if (count >= 0xFE)
             {
-                case (byte)PacketType.MoveCommand:
-                    return new Packet { Type = PacketType.MoveCommand };
-
-                case (byte)PacketType.PixelData:
-                {
-                    int count = bytes[1];
-                    int offset = 1;
-
-                    if (count >= 0xFE)
-                    {
-                        count = bytes[2];
-                        count += bytes[3] << 8;
-                        count += bytes[4] << 16;
-                        offset = 4;
-                    }
-
-                    IList<PixelData> pixels = new List<PixelData>();
-                    for (int i = 1; i <= count; i++)
-                    {
-                        int posX = bytes[offset + 1];
-                        int posY = bytes[offset + 2];
-                        Color color = Color.FromArgb(bytes[offset + 3], bytes[offset + 4], bytes[offset + 5]);
-                        pixels.Add(new PixelData(posX, posY, color));
-                        offset += 5;
-                    }
-                    return new Packet { Type = PacketType.PixelData, Content = pixels };
-                }
+                count = stream.ReadByte();
+                count += stream.ReadByte() << 8;
+                count += stream.ReadByte() << 16;
             }
-            return null;
+
+            IList<PixelData> pixels = new List<PixelData>();
+            for (int i = 0; i < count; i++)
+            {
+                int posX = stream.ReadByte();
+                int posY = stream.ReadByte();
+                Color color = Color.FromArgb(stream.ReadByte(), stream.ReadByte(), stream.ReadByte());
+                pixels.Add(new PixelData(posX, posY, color));
+            }
+            return new Packet { Content = pixels };
         }
 
         public byte[] Serialize(IPacket input)
@@ -45,42 +33,33 @@ namespace BusyBeetle.Core.Serialization
             if (input == null)
                 return null;
 
-            switch (input.Type)
+            IList<PixelData> pixels = (List<PixelData>)input.Content;
+            int length = pixels.Count;
+
+            List<byte> bytes = new List<byte>();
+
+            if (length >= 0xFE)
             {
-                case PacketType.MoveCommand:
-                    return new[] { (byte)input.Type };
-
-                case PacketType.PixelData:
-
-                    IList<PixelData> pixels = (List<PixelData>)input.Content;
-                    int length = pixels.Count;
-
-                    List<byte> bytes = new List<byte> { (byte)PacketType.PixelData };
-
-                    if (length >= 0xFE)
-                    {
-                        bytes.Add(0xFe);
-                        bytes.Add((byte)(length & 0xFF));
-                        bytes.Add((byte)((length >> 8) & 0xFF));
-                        bytes.Add((byte)((length >> 16) & 0xFF));
-                    }
-                    else
-                    {
-                        bytes.Add((byte)length);
-                    }
-
-                    foreach (PixelData pixel in pixels)
-                    {
-                        bytes.Add((byte)pixel.PositionX);
-                        bytes.Add((byte)pixel.PositionY);
-                        bytes.Add(pixel.Color.R);
-                        bytes.Add(pixel.Color.G);
-                        bytes.Add(pixel.Color.B);
-                    }
-
-                    return bytes.ToArray();
+                bytes.Add(0xFe);
+                bytes.Add((byte)(length & 0xFF));
+                bytes.Add((byte)((length >> 8) & 0xFF));
+                bytes.Add((byte)((length >> 16) & 0xFF));
             }
-            return null;
+            else
+            {
+                bytes.Add((byte)length);
+            }
+
+            foreach (PixelData pixel in pixels)
+            {
+                bytes.Add((byte)pixel.PositionX);
+                bytes.Add((byte)pixel.PositionY);
+                bytes.Add(pixel.Color.R);
+                bytes.Add(pixel.Color.G);
+                bytes.Add(pixel.Color.B);
+            }
+
+            return bytes.ToArray();
         }
     }
 }

@@ -3,6 +3,6 @@
     public enum PacketType
     {
         MoveCommand = 0x01,
-        PixelData = 0x02,
+        PixelData = 0x02
     }
 }
