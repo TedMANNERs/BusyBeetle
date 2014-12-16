@@ -11,6 +11,7 @@ namespace BusyBeetle.Core
             Bind<IWorldFactory>().ToFactory();
             Bind<IWorld>().To<World>();
             Bind<ISerializer>().To<Serializer>();
+            Bind<ICoordinator>().To<Coordinator>().InSingletonScope();
         }
     }
 }

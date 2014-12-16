@@ -28,7 +28,7 @@ namespace BusyBeetle.Client
 
             IDispatcher dispatcher = new BeetleDispatcher(Dispatcher.CurrentDispatcher);
             CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
-            Coordinator = CoreKernel.Get<Coordinator>();
+            Coordinator = CoreKernel.Get<ICoordinator>();
         }
 
         public ICommand AddBeetleCommand { get; set; }
@@ -45,7 +45,7 @@ namespace BusyBeetle.Client
         }
 
         public Point SelectedPosition { get; set; }
-        public Coordinator Coordinator { get; set; }
+        public ICoordinator Coordinator { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void GetPixelColor(Point mousePosition)

@@ -4,7 +4,7 @@ using Point = System.Windows.Point;
 
 namespace BusyBeetle.Core
 {
-    public class Coordinator
+    public class Coordinator : ICoordinator
     {
         public Coordinator(IWorldFactory worldFactory)
         {
