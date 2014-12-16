@@ -8,7 +8,7 @@ namespace BusyBeetle.Core
     {
         public Coordinator(IWorldFactory worldFactory)
         {
-            World = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor));
+            World = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor), true);
         }
 
         public IWorld World { get; private set; }

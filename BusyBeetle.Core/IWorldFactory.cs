@@ -2,6 +2,6 @@
 {
     public interface IWorldFactory
     {
-        IWorld Create(int width, int height);
+        IWorld Create(int width, int height, bool updating);
     }
 }

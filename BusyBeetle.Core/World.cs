@@ -14,19 +14,20 @@ namespace BusyBeetle.Core
         private readonly IDispatcher _dispatcher;
         private bool _isRunning = true;
 
-        public World(IDispatcher dispatcher, int width, int height)
+        public World(IDispatcher dispatcher, int width, int height, bool updating)
         {
             Width = width;
             Height = height;
             _dispatcher = dispatcher;
             Beetles = new List<Beetle>();
             CreateBitmap();
+
+            if (!updating)
+                return;
+
             Task updateTask = new Task(Update);
             updateTask.Start();
         }
-
-        public Bitmap Bitmap { get; set; }
-        public List<Beetle> Beetles { get; set; }
 
         public int HeightScaled
         {
@@ -39,6 +40,8 @@ namespace BusyBeetle.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public Bitmap Bitmap { get; set; }
+        public List<Beetle> Beetles { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
 
@@ -65,6 +68,11 @@ namespace BusyBeetle.Core
             }
         }
 
+        public void Stop()
+        {
+            _isRunning = false;
+        }
+
         private void CreateBitmap()
         {
             Bitmap = new Bitmap(Width, Height);
@@ -87,11 +95,6 @@ namespace BusyBeetle.Core
                 OnPropertyChanged("WidthScaled");
                 Thread.Sleep(20);
             }
-        }
-
-        public void Stop()
-        {
-            _isRunning = false;
         }
 
         [NotifyPropertyChangedInvocator]

@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using BusyBeetle.Core;
 using BusyBeetle.Core.Dispatcher;
-using FakeItEasy;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,8 +13,8 @@ namespace BusyBeetle.CoreTest
         public void Setup()
         {
             _dispatcher = new SynchronusDispatcher();
-            
-            _testee = new World(_dispatcher, 100, 100);
+
+            _testee = new World(_dispatcher, 100, 100, false);
         }
 
         private World _testee;
