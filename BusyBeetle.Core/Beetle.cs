@@ -53,16 +53,11 @@ namespace BusyBeetle.Core
             }
         }
 
-        public void Update()
+        public void Tick()
         {
-            do
-            {
-                UpdateColorAndDirection();
-                MoveStraight();
-                CheckBorder();
-                Thread.Sleep(1);
-            }
-            while (_isRunning && !Connection.IsEstablished);
+            UpdateColorAndDirection();
+            MoveStraight();
+            CheckBorder();
         }
 
         public void CheckBorder()

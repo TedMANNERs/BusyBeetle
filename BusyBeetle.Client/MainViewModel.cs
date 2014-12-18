@@ -64,18 +64,19 @@ namespace BusyBeetle.Client
             SelectedColor = typeof(Colors).GetProperties().FirstOrDefault(p => System.Drawing.Color.FromName(p.Name).ToArgb() == color.ToArgb());
         }
 
-        private void MainWindowClosing(object sender, CancelEventArgs e)
+        private async void MainWindowClosing(object sender, CancelEventArgs e)
         {
-            new Task(
-                () =>
-                {
-                    foreach (Beetle beetle in Coordinator.World.Beetles)
-                    {
-                        beetle.Stop();
-                    }
-                    _service.Stop();
-                    Coordinator.World.Stop();
-                }).Start();
+            foreach (Beetle beetle in Coordinator.World.Beetles)
+            {
+                beetle.Stop();
+            }
+            foreach (Task beetleTask in Coordinator.BeetleTasks)
+            {
+                beetleTask.Wait();
+                beetleTask.Dispose();
+            }
+            Coordinator.World.Stop();
+            await Task.Run(() => _service.Stop());
         }
 
         [NotifyPropertyChangedInvocator]

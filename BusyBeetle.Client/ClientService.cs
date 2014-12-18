@@ -45,9 +45,9 @@ namespace BusyBeetle.Client
         public void Stop()
         {
             _isRunning = false;
+            Connection.IsEstablished = false;
             _connectionHandler.Wait();
             _connectionHandler.Dispose();
-            Connection.IsEstablished = false;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -102,7 +102,7 @@ namespace BusyBeetle.Client
                             {
                                 foreach (Beetle beetle in _coordinator.World.Beetles)
                                 {
-                                    beetle.Update();
+                                    beetle.Tick();
                                     modifiedPixels.Add(beetle.ModifiedPixel);
                                 }
                             }
