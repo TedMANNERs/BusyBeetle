@@ -9,7 +9,7 @@ namespace BusyBeetle.Core
     {
         public Coordinator(IWorldFactory worldFactory)
         {
-            World = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor), true);
+            World = worldFactory.Create(200, 200, true);
             BeetleTasks = new List<Task>();
         }
 
@@ -29,6 +29,13 @@ namespace BusyBeetle.Core
                 });
             BeetleTasks.Add(task);
             task.Start();
+        }
+
+        public void CreateWorld(int width, int height)
+        {
+            World.Bitmap = new Bitmap(World.Bitmap, width, height);
+            World.Width = width;
+            World.Height = height;
         }
     }
 }

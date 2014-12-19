@@ -2,7 +2,7 @@
 {
     public enum PacketType
     {
-        MoveCommand = 0x01,
+        SizeNegotiation = 0x01,
         PixelData = 0x02
     }
 }

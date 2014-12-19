@@ -10,5 +10,7 @@ namespace BusyBeetle.Core
         IList<Task> BeetleTasks { get; set; }
 
         void SpawnBeetleAt(Point position, System.Windows.Media.Color color);
+
+        void CreateWorld(int width, int height);
     }
 }

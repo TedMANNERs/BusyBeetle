@@ -76,8 +76,16 @@ namespace BusyBeetle.Client
                 TcpClient client = new TcpClient(_config.IpAddress.ToString(), _config.Port);
                 NetworkStream stream = client.GetStream();
                 Connection.IsEstablished = true;
-                IPacket initialPacket = _serializer.Deserialize(stream);
-                List<PixelData> initialPixels = (List<PixelData>)initialPacket.Content;
+
+                IPacket worldSizePacket = _serializer.Deserialize(stream);
+                int[] worldSize = (int[])worldSizePacket.Content;
+                lock (_coordinator.World)
+                {
+                    _coordinator.CreateWorld(worldSize[0], worldSize[1]);
+                }
+
+                IPacket initialWorldPacket = _serializer.Deserialize(stream);
+                List<PixelData> initialPixels = (List<PixelData>)initialWorldPacket.Content;
                 foreach (PixelData pixel in initialPixels)
                 {
                     _coordinator.World.SetAt(pixel.PositionX, pixel.PositionY, pixel.Color);
@@ -106,11 +114,11 @@ namespace BusyBeetle.Client
                                     modifiedPixels.Add(beetle.ModifiedPixel);
                                 }
                             }
-                            packetBytes = _serializer.Serialize(new Packet { Content = modifiedPixels });
+                            packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });
                         }
                         else
                         {
-                            packetBytes = _serializer.Serialize(new Packet { Content = new List<PixelData>() });
+                            packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = new List<PixelData>() });
                         }
 
                         stream.Write(packetBytes, 0, packetBytes.Length);

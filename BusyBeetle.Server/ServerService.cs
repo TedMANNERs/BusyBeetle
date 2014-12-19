@@ -25,7 +25,7 @@ namespace BusyBeetle.Server
         public ServerService(ISerializer serializer, IWorldFactory worldFactory)
         {
             _serializer = serializer;
-            _world = worldFactory.Create((int)(200 * Values.Scalefactor), (int)(200 * Values.Scalefactor), false);
+            _world = worldFactory.Create(200, 200, false);
             _clients = new List<Client>();
         }
 
@@ -99,8 +99,13 @@ namespace BusyBeetle.Server
                             }
                         }
 
-                        byte[] bytes = _serializer.Serialize(new Packet { Content = pixels });
-                        stream.Write(bytes, 0, bytes.Length);
+                        int[] worldSize = { _world.Width, _world.Height };
+                        byte[] sizeBytes = _serializer.Serialize(new Packet{Type = PacketType.SizeNegotiation, Content = worldSize});
+                        stream.Write(sizeBytes, 0 , sizeBytes.Length);
+                        stream.Flush();
+
+                        byte[] pixelBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = pixels });
+                        stream.Write(pixelBytes, 0, pixelBytes.Length);
                         stream.Flush();
 
                         lock (_clients)
@@ -135,7 +140,7 @@ namespace BusyBeetle.Server
                                 client.LastModifiedPixels.Clear();
 
                                 NetworkStream stream = client.TcpClient.GetStream();
-                                byte[] bytes = _serializer.Serialize(new Packet { Content = _modifiedPixels });
+                                byte[] bytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = _modifiedPixels });
                                 stream.Write(bytes, 0, bytes.Length);
                                 stream.Flush();
 
