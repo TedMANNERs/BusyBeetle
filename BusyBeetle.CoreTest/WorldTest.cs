@@ -14,7 +14,7 @@ namespace BusyBeetle.CoreTest
         {
             _dispatcher = new SynchronusDispatcher();
 
-            _testee = new World(_dispatcher, 100, 100, false);
+            _testee = new World(_dispatcher, 100, 100, true);
         }
 
         private World _testee;
@@ -27,9 +27,9 @@ namespace BusyBeetle.CoreTest
 
             // act
             Color color = _testee.GetAt(50, 50);
+            _testee.Stop();
 
             // assert
-            _testee.Stop();
             color.ToArgb().ShouldBeEquivalentTo(Color.White.ToArgb());
         }
 

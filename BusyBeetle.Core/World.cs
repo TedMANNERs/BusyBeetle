@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -9,9 +10,10 @@ using BusyBeetle.Core.Properties;
 
 namespace BusyBeetle.Core
 {
-    public class World : INotifyPropertyChanged, IWorld
+    public class World : INotifyPropertyChanged, IWorld, IDisposable
     {
         private readonly IDispatcher _dispatcher;
+        private readonly Task _updateTask;
         private bool _isRunning = true;
 
         public World(IDispatcher dispatcher, int width, int height, bool updating)
@@ -25,8 +27,8 @@ namespace BusyBeetle.Core
             if (!updating)
                 return;
 
-            Task updateTask = new Task(Update);
-            updateTask.Start();
+            _updateTask = new Task(Update);
+            _updateTask.Start();
         }
 
         public int HeightScaled
@@ -37,6 +39,12 @@ namespace BusyBeetle.Core
         public int WidthScaled
         {
             get { return (int)(Width * Values.Scalefactor); }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -71,6 +79,8 @@ namespace BusyBeetle.Core
         public void Stop()
         {
             _isRunning = false;
+            _updateTask.Wait();
+            _updateTask.Dispose();
         }
 
         private void CreateBitmap()
@@ -103,6 +113,14 @@ namespace BusyBeetle.Core
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _updateTask.Dispose();
+            }
         }
     }
 }
