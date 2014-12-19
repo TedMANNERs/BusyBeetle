@@ -66,10 +66,6 @@ namespace BusyBeetle.Client
 
         private async void MainWindowClosing(object sender, CancelEventArgs e)
         {
-            foreach (Beetle beetle in Coordinator.World.Beetles)
-            {
-                beetle.Stop();
-            }
             foreach (Task beetleTask in Coordinator.BeetleTasks)
             {
                 beetleTask.Wait();

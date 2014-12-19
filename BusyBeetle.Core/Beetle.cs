@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Threading;
 using BusyBeetle.Core.Direction;
 
 namespace BusyBeetle.Core
@@ -7,7 +6,6 @@ namespace BusyBeetle.Core
     public class Beetle
     {
         private readonly IWorld _world;
-        private bool _isRunning = true;
 
         public Beetle(int posX, int posY, Color color, IWorld world)
         {
@@ -87,11 +85,6 @@ namespace BusyBeetle.Core
                 ModifiedPixel = new PixelData(PositionX, PositionY, Color);
                 TurnRight();
             }
-        }
-
-        public void Stop()
-        {
-            _isRunning = false;
         }
     }
 }
