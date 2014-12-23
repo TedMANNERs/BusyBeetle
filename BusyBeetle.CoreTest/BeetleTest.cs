@@ -2,6 +2,7 @@
 using BusyBeetle.Core.Direction;
 using FakeItEasy;
 using BusyBeetle.Core;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace BusyBeetle.CoreTest
@@ -12,7 +13,7 @@ namespace BusyBeetle.CoreTest
         private IWorld _world;
         private Beetle _testee;
         private readonly Color _testeeColor = Color.Green;
-        private int posValue = 50;
+        private const int PosValue = 50;
 
         [SetUp]
         public void Setup()
@@ -20,31 +21,31 @@ namespace BusyBeetle.CoreTest
             _world = A.Fake<IWorld>();
             _world.Width = 100;
             _world.Height = 100;
-            _testee = new Beetle(50, 50, _testeeColor, _world);
+            _testee = new Beetle(50, 50, _testeeColor);
         }
 
         [Test]
         public void UpdateColorAndDirection_WhenEncounteredColorIsOwnColor_ThenSetPixelWhite()
         {
             // arrange
-            A.CallTo(() => _world.GetAt(50, 50)).Returns(_testeeColor);
+            A.CallTo(() => _world.GetAt(_testee.PositionX, _testee.PositionY)).Returns(_testeeColor);
 
             // act
-            _testee.UpdateColorAndDirection();
+            Color actualColor = _testee.UpdateColorAndDirection(_world.GetAt(_testee.PositionX, _testee.PositionY));
 
             // assert
-            A.CallTo(() => _world.SetAt(50, 50, Color.White)).MustHaveHappened();
+            actualColor.ShouldBeEquivalentTo(Color.White);
         }
 
         [Test]
         public void UpdateColorAndDirection_WhenEncounteredColorIsNotOwnColor_ThenSetPixelOwnColor()
         {
             // arrange
-            A.CallTo(() => _world.GetAt(50, 50)).Returns(Color.Blue);
+            A.CallTo(() => _world.GetAt(_testee.PositionX, _testee.PositionY)).Returns(Color.Blue);
             // act
-            _testee.UpdateColorAndDirection();
+            Color actualColor = _testee.UpdateColorAndDirection(_world.GetAt(_testee.PositionX, _testee.PositionY));
             // assert
-            A.CallTo(() => _world.SetAt(50, 50, _testeeColor)).MustHaveHappened();
+            actualColor.ShouldBeEquivalentTo(_testeeColor);
         }
 
         [Test]
@@ -53,7 +54,7 @@ namespace BusyBeetle.CoreTest
             // arrange
             _testee.PositionX = 100;
             // act
-            _testee.CheckBorder();
+            _testee.ClampPosition(_world.Width, _world.Height);
             // assert
             Assert.AreEqual(_testee.PositionX, 0);
         }
@@ -64,7 +65,7 @@ namespace BusyBeetle.CoreTest
             // arrange
             _testee.PositionX = -1;
             // act
-            _testee.CheckBorder();
+            _testee.ClampPosition(_world.Width, _world.Height);
             // assert
             Assert.AreEqual(_testee.PositionX, _world.Width - 1);
         }
@@ -75,7 +76,7 @@ namespace BusyBeetle.CoreTest
             // arrange
             _testee.PositionY = 100;
             // act
-            _testee.CheckBorder();
+            _testee.ClampPosition(_world.Width, _world.Height);
             // assert
             Assert.AreEqual(_testee.PositionY, 0);
         }
@@ -86,7 +87,7 @@ namespace BusyBeetle.CoreTest
             // arrange
             _testee.PositionY = -1;
             // act
-            _testee.CheckBorder();
+            _testee.ClampPosition(_world.Width, _world.Height);
             // assert
             Assert.AreEqual(_testee.PositionY, _world.Width - 1);
         }
@@ -96,11 +97,11 @@ namespace BusyBeetle.CoreTest
         {
             // arrange
             _testee.Direction = Direction.Up;
-            _testee.PositionY = posValue;
+            _testee.PositionY = PosValue;
             // act
             _testee.MoveStraight();
             // assert
-            Assert.AreEqual(_testee.PositionY, posValue + 1);
+            Assert.AreEqual(_testee.PositionY, PosValue + 1);
         }
 
         [Test]
@@ -108,11 +109,11 @@ namespace BusyBeetle.CoreTest
         {
             // arrange
             _testee.Direction = Direction.Right;
-            _testee.PositionX = posValue;
+            _testee.PositionX = PosValue;
             // act
             _testee.MoveStraight();
             // assert
-            Assert.AreEqual(_testee.PositionX, posValue + 1);
+            Assert.AreEqual(_testee.PositionX, PosValue + 1);
         }
 
         [Test]
@@ -120,11 +121,11 @@ namespace BusyBeetle.CoreTest
         {
             // arrange
             _testee.Direction = Direction.Down;
-            _testee.PositionY = posValue;
+            _testee.PositionY = PosValue;
             // act
             _testee.MoveStraight();
             // assert
-            Assert.AreEqual(_testee.PositionY, posValue - 1);
+            Assert.AreEqual(_testee.PositionY, PosValue - 1);
         }
 
         [Test]
@@ -132,11 +133,11 @@ namespace BusyBeetle.CoreTest
         {
             // arrange
             _testee.Direction = Direction.Left;
-            _testee.PositionX = posValue;
+            _testee.PositionX = PosValue;
             // act
             _testee.MoveStraight();
             // assert
-            Assert.AreEqual(_testee.PositionX, posValue - 1);
+            Assert.AreEqual(_testee.PositionX, PosValue - 1);
         }
     }
 }

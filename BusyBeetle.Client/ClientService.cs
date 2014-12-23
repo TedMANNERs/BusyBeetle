@@ -107,15 +107,7 @@ namespace BusyBeetle.Client
                         {
                             if (_coordinator.World.Beetles.Any())
                             {
-                                List<PixelData> modifiedPixels = new List<PixelData>();
-                                lock (_coordinator.World.Beetles)
-                                {
-                                    foreach (Beetle beetle in _coordinator.World.Beetles)
-                                    {
-                                        beetle.Tick();
-                                        modifiedPixels.Add(beetle.ModifiedPixel);
-                                    }
-                                }
+                                List<PixelData> modifiedPixels = _coordinator.World.Tick();
                                 packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });
                             }
                             else

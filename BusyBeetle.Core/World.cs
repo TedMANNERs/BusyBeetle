@@ -85,6 +85,22 @@ namespace BusyBeetle.Core
             InitPixelArray(width, height);
         }
 
+        public List<PixelData> Tick()
+        {
+            List<PixelData> modifiedPixels = new List<PixelData>();
+
+            foreach (Beetle beetle in Beetles)
+            {
+                Color updatedColor = beetle.UpdateColorAndDirection(GetAt(beetle.PositionX, beetle.PositionY));
+                SetAt(beetle.PositionX, beetle.PositionY, updatedColor);
+                beetle.MoveStraight();
+                beetle.ClampPosition(Width, Height);
+                modifiedPixels.Add(beetle.ModifiedPixel);
+            }
+
+            return modifiedPixels;
+        }
+
         private void InitPixelArray(int width, int height)
         {
             _pixelArray = new Color[width][];

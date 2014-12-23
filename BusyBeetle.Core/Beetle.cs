@@ -5,22 +5,19 @@ namespace BusyBeetle.Core
 {
     public class Beetle
     {
-        private readonly IWorld _world;
-
-        public Beetle(int posX, int posY, Color color, IWorld world)
+        public Beetle(int posX, int posY, Color color)
         {
             PositionX = posX;
             PositionY = posY;
             Direction = 0;
             Color = color;
-            _world = world;
         }
 
         public int PositionX { get; set; }
         public int PositionY { get; set; }
         public Direction.Direction Direction { get; set; }
         public Color Color { get; set; }
-        public PixelData ModifiedPixel { get; private set; }
+        public PixelData ModifiedPixel { get; set; }
 
         public void TurnLeft()
         {
@@ -30,6 +27,19 @@ namespace BusyBeetle.Core
         public void TurnRight()
         {
             Direction = Direction.Next();
+        }
+
+        public void ClampPosition(int width, int height)
+        {
+            if (PositionX >= width)
+                PositionX = 0;
+            else if (PositionX < 0)
+                PositionX = width - 1;
+
+            if (PositionY >= height)
+                PositionY = 0;
+            else if (PositionY < 0)
+                PositionY = height - 1;
         }
 
         public void MoveStraight()
@@ -51,40 +61,18 @@ namespace BusyBeetle.Core
             }
         }
 
-        public void Tick()
+        public Color UpdateColorAndDirection(Color currentColor)
         {
-            UpdateColorAndDirection();
-            MoveStraight();
-            CheckBorder();
-        }
-
-        public void CheckBorder()
-        {
-            if (PositionX >= _world.Width)
-                PositionX = 0;
-            else if (PositionX < 0)
-                PositionX = _world.Width - 1;
-
-            if (PositionY >= _world.Height)
-                PositionY = 0;
-            else if (PositionY < 0)
-                PositionY = _world.Height - 1;
-        }
-
-        public void UpdateColorAndDirection()
-        {
-            if (_world.GetAt(PositionX, PositionY).ToArgb() == Color.ToArgb())
+            if (currentColor.ToArgb() == Color.ToArgb())
             {
-                _world.SetAt(PositionX, PositionY, Color.White);
                 ModifiedPixel = new PixelData(PositionX, PositionY, Color.White);
                 TurnLeft();
+                return Color.White;
             }
-            else
-            {
-                _world.SetAt(PositionX, PositionY, Color);
-                ModifiedPixel = new PixelData(PositionX, PositionY, Color);
-                TurnRight();
-            }
+
+            ModifiedPixel = new PixelData(PositionX, PositionY, Color);
+            TurnRight();
+            return Color;
         }
     }
 }

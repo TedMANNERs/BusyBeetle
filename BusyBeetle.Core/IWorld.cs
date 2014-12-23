@@ -17,5 +17,7 @@ namespace BusyBeetle.Core
         void Stop();
 
         void SetNewSize(int width, int height);
+
+        List<PixelData> Tick();
     }
 }
