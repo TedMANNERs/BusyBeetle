@@ -81,7 +81,7 @@ namespace BusyBeetle.Client
                 int[] worldSize = (int[])worldSizePacket.Content;
                 lock (_coordinator.World)
                 {
-                    _coordinator.CreateWorld(worldSize[0], worldSize[1]);
+                    _coordinator.World.SetNewSize(worldSize[0], worldSize[1]);
                 }
 
                 IPacket initialWorldPacket = _serializer.Deserialize(stream);
@@ -103,22 +103,25 @@ namespace BusyBeetle.Client
                         }
 
                         byte[] packetBytes;
-                        if (_coordinator.World.Beetles.Any())
+                        lock (_coordinator.World.Beetles)
                         {
-                            List<PixelData> modifiedPixels = new List<PixelData>();
-                            lock (_coordinator.World.Beetles)
+                            if (_coordinator.World.Beetles.Any())
                             {
-                                foreach (Beetle beetle in _coordinator.World.Beetles)
+                                List<PixelData> modifiedPixels = new List<PixelData>();
+                                lock (_coordinator.World.Beetles)
                                 {
-                                    beetle.Tick();
-                                    modifiedPixels.Add(beetle.ModifiedPixel);
+                                    foreach (Beetle beetle in _coordinator.World.Beetles)
+                                    {
+                                        beetle.Tick();
+                                        modifiedPixels.Add(beetle.ModifiedPixel);
+                                    }
                                 }
+                                packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });
                             }
-                            packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });
-                        }
-                        else
-                        {
-                            packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = new List<PixelData>() });
+                            else
+                            {
+                                packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = new List<PixelData>() });
+                            }
                         }
 
                         stream.Write(packetBytes, 0, packetBytes.Length);

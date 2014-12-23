@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using BusyBeetle.Client.Properties;
 using BusyBeetle.Core;
-using BusyBeetle.Core.Dispatcher;
 using Configuration = BusyBeetle.Core.Configuration;
 
 namespace BusyBeetle.Client
@@ -32,8 +30,6 @@ namespace BusyBeetle.Client
             AddBeetleCommand = new DelegateCommand(obj => Coordinator.SpawnBeetleAt(Mouse.GetPosition((IInputElement)obj), (Color)SelectedColor.GetValue(null)), () => true);
             GetColorCommand = new DelegateCommand(obj => GetPixelColor(Mouse.GetPosition((IInputElement)obj)), () => true);
 
-            IDispatcher dispatcher = new BeetleDispatcher(Dispatcher.CurrentDispatcher);
-            CoreKernel.Instance.Kernel.Bind<IDispatcher>().ToConstant(dispatcher).InSingletonScope();
             Coordinator = CoreKernel.Get<ICoordinator>();
             _service = CoreKernel.Get<ClientService>();
             IConfiguration config = new Configuration(IPAddress.Parse(ConfigurationManager.AppSettings["IpAddress"]), Convert.ToInt32(ConfigurationManager.AppSettings["Port"]));

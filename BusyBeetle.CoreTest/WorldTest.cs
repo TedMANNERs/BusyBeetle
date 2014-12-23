@@ -1,33 +1,50 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using BusyBeetle.Core;
-using BusyBeetle.Core.Dispatcher;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace BusyBeetle.CoreTest
 {
     [TestFixture]
-    public class WorldTest
+    public class WorldTest : IDisposable
     {
         [SetUp]
         public void Setup()
         {
-            _dispatcher = new SynchronusDispatcher();
+            _testee = new World(100, 100, true);
+        }
 
-            _testee = new World(_dispatcher, 100, 100, true);
+        [TearDown]
+        public void TearDown()
+        {
+            _testee.Stop();
         }
 
         private World _testee;
-        private IDispatcher _dispatcher;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _testee.Dispose();
+            }
+        }
 
         [Test]
         public void GetAt_WhenWorldIsEmpty_ThenReturnedPixelIsWhite()
         {
             // arrange
+            _testee.SetAt(50, 50, Color.White);
 
             // act
             Color color = _testee.GetAt(50, 50);
-            _testee.Stop();
 
             // assert
             color.ToArgb().ShouldBeEquivalentTo(Color.White.ToArgb());
@@ -41,10 +58,9 @@ namespace BusyBeetle.CoreTest
 
             // act
             _testee.SetAt(50, 50, color);
-            _testee.Stop();
 
             // assert
-            _testee.Bitmap.GetPixel(50, 50).ToArgb().ShouldBeEquivalentTo(color.ToArgb());
+            _testee.GetAt(50, 50).ToArgb().ShouldBeEquivalentTo(color.ToArgb());
         }
     }
 }

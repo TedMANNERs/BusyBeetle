@@ -54,14 +54,12 @@
   <ItemGroup>
     <Compile Include="Beetle.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Dispatcher\BeetleDispatcher.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Coordinator.cs" />
     <Compile Include="CoreKernel.cs" />
     <Compile Include="CoreModule.cs" />
     <Compile Include="Direction\Direction.cs" />
     <Compile Include="Direction\DirectionExtensions.cs" />
-    <Compile Include="Dispatcher\IDispatcher.cs" />
     <Compile Include="IConfiguration.cs" />
     <Compile Include="ICoordinator.cs" />
     <Compile Include="IService.cs" />

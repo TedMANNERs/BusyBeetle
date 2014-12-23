@@ -15,5 +15,7 @@ namespace BusyBeetle.Core
         void SetAt(int x, int y, Color color);
 
         void Stop();
+
+        void SetNewSize(int width, int height);
     }
 }

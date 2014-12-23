@@ -30,12 +30,5 @@ namespace BusyBeetle.Core
             BeetleTasks.Add(task);
             task.Start();
         }
-
-        public void CreateWorld(int width, int height)
-        {
-            World.Bitmap = new Bitmap(World.Bitmap, width, height);
-            World.Width = width;
-            World.Height = height;
-        }
     }
 }

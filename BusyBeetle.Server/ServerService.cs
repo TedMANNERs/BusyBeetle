@@ -88,20 +88,17 @@ namespace BusyBeetle.Server
                         NetworkStream stream = tcpClient.GetStream();
                         List<PixelData> pixels = new List<PixelData>();
 
-                        lock (_world.Bitmap)
+                        for (int i = 0; i < _world.Width; i++)
                         {
-                            for (int i = 0; i < _world.Width; i++)
+                            for (int j = 0; j < _world.Height; j++)
                             {
-                                for (int j = 0; j < _world.Height; j++)
-                                {
-                                    pixels.Add(new PixelData(i, j, _world.Bitmap.GetPixel(i, j)));
-                                }
+                                pixels.Add(new PixelData(i, j, _world.GetAt(i, j)));
                             }
                         }
 
                         int[] worldSize = { _world.Width, _world.Height };
-                        byte[] sizeBytes = _serializer.Serialize(new Packet{Type = PacketType.SizeNegotiation, Content = worldSize});
-                        stream.Write(sizeBytes, 0 , sizeBytes.Length);
+                        byte[] sizeBytes = _serializer.Serialize(new Packet { Type = PacketType.SizeNegotiation, Content = worldSize });
+                        stream.Write(sizeBytes, 0, sizeBytes.Length);
                         stream.Flush();
 
                         byte[] pixelBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = pixels });

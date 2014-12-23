@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using BusyBeetle.Core;
 
 namespace BusyBeetle.Client
 {
@@ -16,7 +17,9 @@ namespace BusyBeetle.Client
                 using (MemoryStream memory = new MemoryStream())
                 {
                     Bitmap world = value as Bitmap;
-                    if (world != null)
+                    if (world == null)
+                        return null;
+                    lock (World.LockObject)
                     {
                         world.Save(memory, ImageFormat.Bmp);
                         memory.Position = 0;
@@ -27,7 +30,6 @@ namespace BusyBeetle.Client
                         bmpImage.EndInit();
                         return bmpImage;
                     }
-                    return null;
                 }
             }
             catch (Exception e)

@@ -5,24 +5,25 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using BusyBeetle.Core.Dispatcher;
 using BusyBeetle.Core.Properties;
 
 namespace BusyBeetle.Core
 {
     public class World : INotifyPropertyChanged, IWorld, IDisposable
     {
-        private readonly IDispatcher _dispatcher;
+        private readonly List<Point> _modifiedPixels = new List<Point>();
         private readonly Task _updateTask;
         private bool _isRunning = true;
+        private Color[][] _pixelArray;
 
-        public World(IDispatcher dispatcher, int width, int height, bool updating)
+        public World(int width, int height, bool updating)
         {
             Width = width;
             Height = height;
-            _dispatcher = dispatcher;
             Beetles = new List<Beetle>();
             CreateBitmap();
+            InitPixelArray(width, height);
+            LockObject = new object();
 
             if (!updating)
                 return;
@@ -41,6 +42,8 @@ namespace BusyBeetle.Core
             get { return (int)(Width * Values.Scalefactor); }
         }
 
+        public static object LockObject { get; set; }
+
         public void Dispose()
         {
             Dispose(true);
@@ -55,24 +58,15 @@ namespace BusyBeetle.Core
 
         public Color GetAt(int x, int y)
         {
-            try
-            {
-                return _dispatcher.Invoke(() => Bitmap.GetPixel(x, y));
-            }
-            catch (TaskCanceledException)
-            {
-                return new Color();
-            }
+            return _pixelArray[x][y];
         }
 
         public void SetAt(int x, int y, Color color)
         {
-            try
+            _pixelArray[x][y] = color;
+            lock (_modifiedPixels)
             {
-                _dispatcher.BeginInvoke(() => Bitmap.SetPixel(x, y, color));
-            }
-            catch (TaskCanceledException)
-            {
+                _modifiedPixels.Add(new Point(x, y));
             }
         }
 
@@ -81,6 +75,28 @@ namespace BusyBeetle.Core
             _isRunning = false;
             _updateTask.Wait();
             _updateTask.Dispose();
+        }
+
+        public void SetNewSize(int width, int height)
+        {
+            Bitmap = new Bitmap(width, height);
+            Width = width;
+            Height = height;
+            InitPixelArray(width, height);
+        }
+
+        private void InitPixelArray(int width, int height)
+        {
+            _pixelArray = new Color[width][];
+
+            for (int i = 0; i < width; i++)
+            {
+                _pixelArray[i] = new Color[height];
+                for (int j = 0; j < height; j++)
+                {
+                    _pixelArray[i][j] = Color.White;
+                }
+            }
         }
 
         private void CreateBitmap()
@@ -100,10 +116,21 @@ namespace BusyBeetle.Core
         {
             while (_isRunning)
             {
+                lock (_modifiedPixels)
+                {
+                    foreach (Point pixel in _modifiedPixels)
+                    {
+                        lock (LockObject)
+                        {
+                            Bitmap.SetPixel(pixel.X, pixel.Y, _pixelArray[pixel.X][pixel.Y]);
+                        }
+                    }
+                    _modifiedPixels.Clear();
+                }
                 OnPropertyChanged("Bitmap");
                 OnPropertyChanged("HeightScaled");
                 OnPropertyChanged("WidthScaled");
-                Thread.Sleep(20);
+                Thread.Sleep(10);
             }
         }
 

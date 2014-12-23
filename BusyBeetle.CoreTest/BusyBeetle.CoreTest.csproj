@@ -56,7 +56,6 @@
     <Compile Include="BeetleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\SerializerTest.cs" />
-    <Compile Include="SynchronusDispatcher.cs" />
     <Compile Include="WorldTest.cs" />
   </ItemGroup>
   <ItemGroup>
