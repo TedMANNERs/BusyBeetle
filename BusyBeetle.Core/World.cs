@@ -89,16 +89,80 @@ namespace BusyBeetle.Core
         {
             List<PixelData> modifiedPixels = new List<PixelData>();
 
-            foreach (Beetle beetle in Beetles)
+            //foreach (Beetle beetle in Beetles)
+            //{
+            //    Color updatedColor = beetle.UpdateColorAndDirection(GetAt(beetle.PositionX, beetle.PositionY));
+            //    SetAt(beetle.PositionX, beetle.PositionY, updatedColor);
+            //    beetle.MoveStraight();
+            //    beetle.ClampPosition(Width, Height);
+            //    modifiedPixels.Add(beetle.ModifiedPixel);
+            //}
+
+            for (int i = 0; i < Width; i++)
             {
-                Color updatedColor = beetle.UpdateColorAndDirection(GetAt(beetle.PositionX, beetle.PositionY));
-                SetAt(beetle.PositionX, beetle.PositionY, updatedColor);
-                beetle.MoveStraight();
-                beetle.ClampPosition(Width, Height);
-                modifiedPixels.Add(beetle.ModifiedPixel);
+                for (int j = 0; j < Height; j++)
+                {
+                    List<PixelData> aliveNeighbours = GetNeighbours(i, j);
+
+                    if (GetAt(i, j).ToArgb() == Color.Black.ToArgb())
+                    {
+                        if (aliveNeighbours.Count < 2)
+                        {
+                            //SetAt(i, j, Color.White);
+                            modifiedPixels.Add(new PixelData(i, j, Color.White));
+                        }
+                        else if (aliveNeighbours.Count < 4)
+                        {
+                            //SetAt(i, j, Color.Black);
+                            modifiedPixels.Add(new PixelData(i, j, Color.Black));
+                        }
+                        else
+                        {
+                            //SetAt(i, j, Color.White);
+                            modifiedPixels.Add(new PixelData(i, j, Color.White));
+                        }
+                    }
+                    else if (aliveNeighbours.Count == 3)
+                    {
+                        //SetAt(i, j, Color.Black);
+                        modifiedPixels.Add(new PixelData(i, j, Color.Black));
+                    }
+                }
             }
 
+            foreach (PixelData modifiedPixel in modifiedPixels)
+                SetAt(modifiedPixel.PositionX, modifiedPixel.PositionY, modifiedPixel.Color);
+
             return modifiedPixels;
+        }
+
+        private List<PixelData> GetNeighbours(int x, int y)
+        {
+            List<PixelData> neighbours = new List<PixelData>();
+            for (int i = x - 1; i <= x + 1; i++)
+            {
+                for (int j = y - 1; j <= y + 1; j++)
+                {
+                    if (i == x && j == y)
+                        continue;
+
+                    Color color = GetAt(Clamp(i), Clamp(j));
+                    if (color.ToArgb() == Color.Black.ToArgb())
+                    {
+                        neighbours.Add(new PixelData(Clamp(i), Clamp(j), color));
+                    }
+                }
+            }
+            return neighbours;
+        }
+
+        private int Clamp(int i)
+        {
+            if (i < 0)
+                return Width - 1;
+            if (i >= Width)
+                return 0;
+            return i;
         }
 
         private void InitPixelArray(int width, int height)

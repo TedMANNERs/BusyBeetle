@@ -105,7 +105,7 @@ namespace BusyBeetle.Client
                         byte[] packetBytes;
                         lock (_coordinator.World.Beetles)
                         {
-                            if (_coordinator.World.Beetles.Any())
+                            if (!_coordinator.World.Beetles.Any())
                             {
                                 List<PixelData> modifiedPixels = _coordinator.World.Tick();
                                 packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });
