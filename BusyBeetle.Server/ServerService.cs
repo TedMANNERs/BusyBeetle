@@ -25,7 +25,7 @@ namespace BusyBeetle.Server
         private TcpListener _listener;
         private Color[][] _world;
 
-        public ServerService(ISerializer serializer, IWorldFactory worldFactory)
+        public ServerService(ISerializer serializer)
         {
             _serializer = serializer;
             InitPixelArray(Width, Height);
