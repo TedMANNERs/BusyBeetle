@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace BusyBeetle.Core
 {
@@ -12,6 +13,7 @@ namespace BusyBeetle.Core
         int HeightScaled { get; }
         int WidthScaled { get; }
         GameType GameType { get; }
+        IList<Task> BeetleTasks { get; set; }
 
         Color GetAt(int x, int y);
 
@@ -24,5 +26,7 @@ namespace BusyBeetle.Core
         List<PixelData> Tick();
 
         void Dispose();
+
+        void SpawnAt(System.Windows.Point position, System.Windows.Media.Color color);
     }
 }

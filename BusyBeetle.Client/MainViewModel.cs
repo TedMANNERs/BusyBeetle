@@ -27,7 +27,7 @@ namespace BusyBeetle.Client
 
             Application.Current.MainWindow.Closing += MainWindowClosing;
 
-            AddBeetleCommand = new DelegateCommand(obj => Coordinator.SpawnAt(Mouse.GetPosition((IInputElement)obj), (Color)SelectedColor.GetValue(null)), () => true);
+            AddBeetleCommand = new DelegateCommand(obj => Coordinator.World.SpawnAt(Mouse.GetPosition((IInputElement)obj), (Color)SelectedColor.GetValue(null)), () => true);
             GetColorCommand = new DelegateCommand(obj => GetPixelColor(Mouse.GetPosition((IInputElement)obj)), () => true);
 
             Coordinator = CoreKernel.Get<ICoordinator>();
@@ -62,7 +62,7 @@ namespace BusyBeetle.Client
 
         private async void MainWindowClosing(object sender, CancelEventArgs e)
         {
-            foreach (Task beetleTask in Coordinator.BeetleTasks)
+            foreach (Task beetleTask in Coordinator.World.BeetleTasks)
             {
                 beetleTask.Wait();
                 beetleTask.Dispose();
