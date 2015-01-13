@@ -10,11 +10,13 @@ namespace BusyBeetle.Server
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("BusyBeetle Server");
-
             IService service = CoreKernel.Get<ServerService>();
+            GameType gameType;
+            Enum.TryParse(ConfigurationManager.AppSettings["GameType"], out gameType);
+            IConfiguration config = new Configuration(IPAddress.Parse(ConfigurationManager.AppSettings["IpAddress"]), Convert.ToInt32(ConfigurationManager.AppSettings["Port"]), gameType);
 
-            IConfiguration config = new Configuration(IPAddress.Parse(ConfigurationManager.AppSettings["IpAddress"]), Convert.ToInt32(ConfigurationManager.AppSettings["Port"]));
+            Console.WriteLine(config.GameType + " Server");
+
             service.Init(config);
             service.Start();
             Console.WriteLine("Press [ENTER] to exit.");

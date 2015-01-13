@@ -14,14 +14,16 @@ namespace BusyBeetle.Client
     {
         private readonly ICoordinator _coordinator;
         private readonly ISerializer _serializer;
+        private readonly IWorldFactory _worldFactory;
         private IConfiguration _config;
         private Task _connectionHandler;
         private bool _isRunning;
 
-        public ClientService(ISerializer serializer, ICoordinator coordinator)
+        public ClientService(ISerializer serializer, ICoordinator coordinator, IWorldFactory worldFactory)
         {
             _serializer = serializer;
             _coordinator = coordinator;
+            _worldFactory = worldFactory;
         }
 
         public void Dispose()
@@ -77,12 +79,13 @@ namespace BusyBeetle.Client
                 NetworkStream stream = client.GetStream();
                 Connection.IsEstablished = true;
 
+                IPacket gameTypePacket = _serializer.Deserialize(stream);
+                GameType gameType = (GameType)gameTypePacket.Content;
+
                 IPacket worldSizePacket = _serializer.Deserialize(stream);
                 int[] worldSize = (int[])worldSizePacket.Content;
-                lock (_coordinator.World)
-                {
-                    _coordinator.World.SetNewSize(worldSize[0], worldSize[1]);
-                }
+
+                _coordinator.World = _worldFactory.Create(worldSize[0], worldSize[1], gameType);
 
                 IPacket initialWorldPacket = _serializer.Deserialize(stream);
                 List<PixelData> initialPixels = (List<PixelData>)initialWorldPacket.Content;
@@ -105,7 +108,7 @@ namespace BusyBeetle.Client
                         byte[] packetBytes;
                         lock (_coordinator.World.Beetles)
                         {
-                            if (!_coordinator.World.Beetles.Any())
+                            if (_coordinator.World.Beetles.Any() || _coordinator.World.GameType == GameType.GameOfLife)
                             {
                                 List<PixelData> modifiedPixels = _coordinator.World.Tick();
                                 packetBytes = _serializer.Serialize(new Packet { Type = PacketType.PixelData, Content = modifiedPixels });

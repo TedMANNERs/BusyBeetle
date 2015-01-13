@@ -6,9 +6,9 @@ namespace BusyBeetle.Core
 {
     public interface ICoordinator
     {
-        IWorld World { get; }
+        IWorld World { get; set; }
         IList<Task> BeetleTasks { get; set; }
 
-        void SpawnBeetleAt(Point position, System.Windows.Media.Color color);
+        void SpawnAt(Point position, System.Windows.Media.Color color);
     }
 }

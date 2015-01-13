@@ -103,6 +103,11 @@ namespace BusyBeetle.Server
                         if (_clients.Select(x => x.TcpClient).Contains(tcpClient))
                             continue;
                         NetworkStream stream = tcpClient.GetStream();
+
+                        byte[] gameTypeBytes = _serializer.Serialize(new Packet { Type = PacketType.GameType, Content = _config.GameType });
+                        stream.Write(gameTypeBytes, 0, gameTypeBytes.Length);
+                        stream.Flush();
+
                         List<PixelData> pixels = new List<PixelData>();
 
                         for (int i = 0; i < Width; i++)

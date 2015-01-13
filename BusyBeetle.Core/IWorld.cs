@@ -9,6 +9,9 @@ namespace BusyBeetle.Core
         int Width { get; set; }
         List<Beetle> Beetles { get; set; }
         Bitmap Bitmap { get; set; }
+        int HeightScaled { get; }
+        int WidthScaled { get; }
+        GameType GameType { get; }
 
         Color GetAt(int x, int y);
 
@@ -19,5 +22,7 @@ namespace BusyBeetle.Core
         void SetNewSize(int width, int height);
 
         List<PixelData> Tick();
+
+        void Dispose();
     }
 }

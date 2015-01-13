@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Beetle.cs" />
+    <Compile Include="BusyBeetleWorld.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Coordinator.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="CoreModule.cs" />
     <Compile Include="Direction\Direction.cs" />
     <Compile Include="Direction\DirectionExtensions.cs" />
+    <Compile Include="GameType.cs" />
     <Compile Include="IConfiguration.cs" />
     <Compile Include="ICoordinator.cs" />
     <Compile Include="IService.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Serialization\PacketType.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Values.cs" />
+    <Compile Include="GameOfLifeWorld.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

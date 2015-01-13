@@ -10,9 +10,9 @@ namespace BusyBeetle.CoreTest
     public class WorldTest : IDisposable
     {
         [SetUp]
-        public void Setup()
+        public void Setup(IWorldFactory worldFactory)
         {
-            _testee = new World(100, 100, true);
+            _testee = worldFactory.Create(1, 1, GameType.BusyBeetle);
         }
 
         [TearDown]
@@ -21,7 +21,7 @@ namespace BusyBeetle.CoreTest
             _testee.Stop();
         }
 
-        private World _testee;
+        private IWorld _testee;
 
         public void Dispose()
         {

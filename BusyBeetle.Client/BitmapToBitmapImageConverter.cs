@@ -12,29 +12,22 @@ namespace BusyBeetle.Client
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            try
+            using (MemoryStream memory = new MemoryStream())
             {
-                using (MemoryStream memory = new MemoryStream())
+                Bitmap world = value as Bitmap;
+                if (world == null)
+                    return null;
+                lock (World.LockObject)
                 {
-                    Bitmap world = value as Bitmap;
-                    if (world == null)
-                        return null;
-                    lock (World.LockObject)
-                    {
-                        world.Save(memory, ImageFormat.Bmp);
-                        memory.Position = 0;
-                        BitmapImage bmpImage = new BitmapImage();
-                        bmpImage.BeginInit();
-                        bmpImage.StreamSource = memory;
-                        bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                        bmpImage.EndInit();
-                        return bmpImage;
-                    }
+                    world.Save(memory, ImageFormat.Bmp);
+                    memory.Position = 0;
+                    BitmapImage bmpImage = new BitmapImage();
+                    bmpImage.BeginInit();
+                    bmpImage.StreamSource = memory;
+                    bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.EndInit();
+                    return bmpImage;
                 }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to convert bitmap to bitmapImage", e);
             }
         }
 

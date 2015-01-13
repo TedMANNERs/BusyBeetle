@@ -6,5 +6,6 @@ namespace BusyBeetle.Core
     {
         IPAddress IpAddress { get; }
         int Port { get; }
+        GameType GameType { get; }
     }
 }

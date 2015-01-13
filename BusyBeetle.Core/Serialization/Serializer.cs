@@ -39,6 +39,10 @@ namespace BusyBeetle.Core.Serialization
                         pixels.Add(new PixelData(posX, posY, color));
                     }
                     return new Packet { Type = PacketType.PixelData, Content = pixels };
+
+                case (int)PacketType.GameType:
+                    GameType gameType = (GameType)stream.ReadByte();
+                    return new Packet {Type = PacketType.GameType, Content = gameType};
             }
             return null;
         }
@@ -86,6 +90,12 @@ namespace BusyBeetle.Core.Serialization
                     }
 
                     return bytes.ToArray();
+
+                case PacketType.GameType:
+                    byte[] gameTypeBytes = new byte[2];
+                    gameTypeBytes[0] = (byte)PacketType.GameType;
+                    gameTypeBytes[1] = (byte)(GameType)input.Content;
+                    return gameTypeBytes;
             }
             return null;
         }
