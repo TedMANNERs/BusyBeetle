@@ -10,9 +10,10 @@ namespace BusyBeetle.CoreTest
     public class WorldTest : IDisposable
     {
         [SetUp]
-        public void Setup(IWorldFactory worldFactory)
+        public void Setup()
         {
-            _testee = worldFactory.Create(1, 1, GameType.BusyBeetle);
+            IWorldFactory worldFactory = CoreKernel.Get<WorldFactory>();
+            _testee = worldFactory.Create(100, 100, GameType.BusyBeetle);
         }
 
         [TearDown]
