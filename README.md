@@ -3,10 +3,11 @@ BusyBeetle
 A simulation of Beetleworld.
 
 How to play:  
-1. Start the server.  
-2. Start one or more clients.   
-3. Choose a color and click on the quadrangle.  
-4. Wait, watch and win. 
+1. Edit server config and choose "BusyBeetle" or "GameOfLife"
+2. Start the server.  
+3. Start one or more clients.   
+4. (Choose a color and) click on the quadrangle.  
+5. Wait, watch and win. 
 
 
 ##World
